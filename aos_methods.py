@@ -5,7 +5,7 @@ from time import sleep
 from selenium import webdriver
 import aos_locators as locators
 from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.service import Service
+# from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 
 options = Options()
@@ -29,7 +29,6 @@ def setup():
     print(f'{locators.app} test started at: {datetime.datetime.now()}')
     print(f'Launch {locators.app}\n')
     driver.set_page_load_timeout(20)
-    os.mkdir(locators.res_dir_name)
     driver.maximize_window()  # open web browser and maximize the window
     driver.implicitly_wait(10)  # wait for the browser response in general
     driver.get(locators.base_url)  # navigate to app website
@@ -67,7 +66,8 @@ def log_in():
             driver.find_element(By.NAME, 'password').send_keys(locators.password)
             sleep(1)
             driver.find_element(By.ID, 'sign_in_btnundefined').click()
-            sleep(1)
+            sleep(1.5)
+            ssh('login')
         else:
             print(f'Login Form is not displayed')
 
@@ -82,6 +82,7 @@ def validate_user_login():
     else:
         print(f'Expected Username: "{locators.user_name}" is not displayed!')
     ssh('validate_user_login')
+
 
 def log_out():
     print(f'\n------------------------~* LOGOUT  *~------------------------')
@@ -164,13 +165,12 @@ def delete_account():
             sleep(2)
         else:
             print(f'Delete Popup is not displayed')
-            driver.find_element(By.CLASS_NAME, 'deleteBtnText').click()
-            sleep(30)
 
 
 def validate_user_deleted():
     print(f'\n------------~* CONFIRM USER DOES NOT EXIST  *~-------------')
     sleep(2)
+    ssh('confirm_user_deleted')
     error_label = driver.find_element(By.XPATH, '//label[contains(.,"Incorrect user name or password.")]').text
     if driver.find_element(By.XPATH, '//label[contains(.,"Incorrect user name or password.")]').is_displayed():
         print(f'Username/Password {locators.user_name}/{locators.password} is not found. Error: {error_label}')
@@ -218,14 +218,16 @@ def checkout_shopping_cart():
     sleep(2)
     print(f'\n------------------------~* CHECKOUT CART  *~------------------------')
     assert driver.find_element(By.XPATH, f'//H3[contains(.,"ORDER PAYMENT")]').is_displayed()
-    assert driver.find_element(By.XPATH, f'//label[@class[contains(.,"selected")] and(text()="1. SHIPPING DETAILS ")]').is_displayed()
+    assert_label1 = f'//label[@class[contains(.,"selected")] and(text()="1. SHIPPING DETAILS ")]'
+    assert driver.find_element(By.XPATH, assert_label1).is_displayed()
     print(f'ORDER PAYMENT > 1. SHIPPING DETAILS page is displayed')
     assert driver.find_element(By.XPATH, f'//label[contains(.,"{locators.full_name}")]').is_displayed()
     print(f'Customer Name: "{locators.full_name}" is displayed\n')
     sleep(2)
     driver.find_element(By.ID, 'next_btn').click()
     sleep(2)
-    assert driver.find_element(By.XPATH, f'//label[@class[contains(.,"selected")] and(text()="2. PAYMENT METHOD")]').is_displayed()
+    assert_label2 = f'//label[@class[contains(.,"selected")] and(text()="2. PAYMENT METHOD")]'
+    assert driver.find_element(By.XPATH, assert_label2).is_displayed()
     print(f'ORDER PAYMENT > 2. PAYMENT METHOD page is displayed')
 
     rndpay = 1  # random.randint(1, 2)
@@ -323,8 +325,15 @@ def logger(action):
 
 
 def ssh(filename):
-    driver.save_screenshot(locators.res_dir_name + '/' + filename + '.png')
-    print(f'Screenshot {filename} is saved to {locators.res_dir_name}')
+    locators.n = locators.n + 1
+    res_path_exist = os.path.exists(locators.res_dir_name)
+    print(f'>> Result directory {locators.res_dir_name} exist: {res_path_exist}')
+    if not res_path_exist:
+        os.mkdir(locators.res_dir_name)
+        print(f'>> Result directory "{locators.res_dir_name}" is created')
+    sshpath = f'{locators.res_dir_name}/{str(locators.n)}_{filename}.png'
+    driver.save_screenshot(sshpath)
+    print(f'>> Screenshot is saved to: {sshpath}')
 
 
 # setup()

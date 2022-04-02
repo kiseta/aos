@@ -1,12 +1,13 @@
+import random
 from faker import Faker
 from datetime import datetime
 fake = Faker(locale=['en_CA', 'en_US'])
-import random
+
 
 # ------------------ AOS WEB ELEMENTS ------------------------------
 app = 'Advantage Online Shopping'
 base_url = 'https://advantageonlineshopping.com/#/'
-#base_url = 'http://localhost:8080/#/'
+# base_url = 'http://localhost:8080/#/'
 new_account_url = base_url + 'register'
 new_account_page_title = 'CREATE NEW ACCOUNT'
 home_page_title = '\xa0Advantage Shopping'
@@ -28,9 +29,10 @@ credit_card_num = fake.credit_card_number(card_type=None)
 security_code = fake.pyint(1111, 9999)
 order_number = ''
 tracking_number = ''
-categories = ['SPEAKERS','TABLETS','LAPTOPS','MICE','HEADPHONES']
+categories = ['SPEAKERS', 'TABLETS', 'LAPTOPS', 'MICE', 'HEADPHONES']
 product_id = random.choice([i for i in range(1, 35) if i != 13])
 res_dir_name = datetime.now().strftime("res_%Y%m%d_%H%M%S")
+n = 0
 
 hr = f'\n------------------------~*~--------------------------'
 
