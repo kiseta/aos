@@ -144,12 +144,14 @@ def delete_account():
     if driver.find_element(By.XPATH, f'//label[contains(.,"{locators.full_name}")]').is_displayed():
         print(f'Account details page for user: \'{locators.full_name}\' is displayed')
         sleep(2)
+        ssh('validat_user_details')
         driver.execute_script("window.scrollTo(1000,1000 )")
         sleep(2)
         driver.find_element(By.CLASS_NAME, 'deleteBtnText').click()
         sleep(5)
         delete_popup = driver.find_element(By.CLASS_NAME, 'deleteAccountPopupContent').is_displayed()
         print(f'Delete popup is displayed: {delete_popup}')
+        ssh('confirm_delete_popup')
         if delete_popup:
             # driver.find_element(By.XPATH, "//div[contains(text(), 'yes')]").click()
             driver.find_element(By.CLASS_NAME, 'deletePopupBtn').click()
@@ -160,6 +162,7 @@ def delete_account():
             conf = driver.find_element(By.XPATH, "//p[contains(., 'deleted successfully')]").get_attribute('innerHTML')
             print(f'Confirmation message is displayed: {conf}')
             sleep(2)
+            ssh('delete_confirmation')
             print(f'User {locators.full_name}/{locators.user_email} is deleted!')
             logger('deleted')
             sleep(2)
@@ -170,7 +173,6 @@ def delete_account():
 def validate_user_deleted():
     print(f'\n------------~* CONFIRM USER DOES NOT EXIST  *~-------------')
     sleep(2)
-    ssh('confirm_user_deleted')
     error_label = driver.find_element(By.XPATH, '//label[contains(.,"Incorrect user name or password.")]').text
     if driver.find_element(By.XPATH, '//label[contains(.,"Incorrect user name or password.")]').is_displayed():
         print(f'Username/Password {locators.user_name}/{locators.password} is not found. Error: {error_label}')
@@ -189,9 +191,10 @@ def checkout_shopping_cart():
     driver.get(f'{locators.base_url}product/{locators.product_id}')
     locators.product_name = driver.find_element(By.CLASS_NAME, 'select').text
     print(f'Random product selected: {locators.product_name}, Product ID: {locators.product_id}')
-    ssh('add_item_to_cart')
     driver.find_element(By.XPATH, '//button[text()="ADD TO CART"]').click()
+    ssh('add_item_to_cart')
     sleep(2)
+
     # navigate to cart
     print(f'\n------------------------~* SHOPPING CART  *~------------------------')
     driver.find_element(By.ID, 'shoppingCartLink').click()
@@ -201,6 +204,7 @@ def checkout_shopping_cart():
     assert driver.find_element(By.XPATH, f'//td/label[contains(.,"{locators.product_name}")]').is_displayed()
     print(f'Product: "{locators.product_name}" is in the cart')
     sleep(2)
+    ssh('item_in_cart')
     driver.find_element(By.ID, 'checkOutButton').click()
 
     # ----------------- check if login form is displayed
@@ -224,6 +228,7 @@ def checkout_shopping_cart():
     assert driver.find_element(By.XPATH, f'//label[contains(.,"{locators.full_name}")]').is_displayed()
     print(f'Customer Name: "{locators.full_name}" is displayed\n')
     sleep(2)
+    ssh('checkout_cart')
     driver.find_element(By.ID, 'next_btn').click()
     sleep(2)
     assert_label2 = f'//label[@class[contains(.,"selected")] and(text()="2. PAYMENT METHOD")]'
@@ -248,7 +253,8 @@ def checkout_shopping_cart():
             driver.find_element(By.NAME, 'save_safepay').click()
             save_safepay = driver.find_element(By.NAME, 'save_safepay').is_selected()
             print(f'Safepay save checkbox selected: {save_safepay}')
-            ssh('payment_completed')
+
+        ssh('payment_completed')
         driver.find_element(By.ID, 'pay_now_btn_SAFEPAY').click()
         # ------------------------- END SAFEPAY PAY ---------------------------------------
 
@@ -327,10 +333,10 @@ def logger(action):
 def ssh(filename):
     locators.n = locators.n + 1
     res_path_exist = os.path.exists(locators.res_dir_name)
-    print(f'>> Result directory {locators.res_dir_name} exist: {res_path_exist}')
     if not res_path_exist:
+        print(f'>> Result directory {locators.res_dir_name} exist: {res_path_exist}')
         os.mkdir(locators.res_dir_name)
-        print(f'>> Result directory "{locators.res_dir_name}" is created')
+        print(f'>> Result directory {locators.res_dir_name} is created')
     sshpath = f'{locators.res_dir_name}/{str(locators.n)}_{filename}.png'
     driver.save_screenshot(sshpath)
     print(f'>> Screenshot is saved to: {sshpath}')
