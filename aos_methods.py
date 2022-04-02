@@ -324,6 +324,7 @@ def logger(action):
 
 def ssh(filename):
     driver.save_screenshot(locators.res_dir_name + '/' + filename + '.png')
+    print(f'Screenshot {filename} is saved to {locators.res_dir_name}')
 
 
 # setup()
