@@ -126,7 +126,7 @@ def create_new_user():
             if driver.find_element(By.LINK_TEXT, locators.user_name).is_displayed():
                 print(f'New User {locators.user_name}/{locators.user_email} registration successful!'
                       f'\nUserName: {locators.user_name} is displayed')
-                logger('created')
+                # logger('created')
                 sleep(1)
             else:
                 print(f'New User was not created. Try again.')
@@ -160,7 +160,7 @@ def delete_account():
             print(f'Confirmation message is displayed: {conf}')
             sleep(2)
             print(f'User {locators.full_name}/{locators.user_email} is deleted!')
-            logger('deleted')
+            # logger('deleted')
             sleep(2)
         else:
             print(f'Delete Popup is not displayed')
@@ -309,18 +309,18 @@ def validate_order():
     sleep(1)
 
 
-def logger(action):
-    # create variable to store the file content
-    old_instance = sys.stdout
-    log_file = open('../logs/aos.log', 'a')  # open log file and append a record
-    sys.stdout = log_file
-    print(f'{locators.user_email}\t'
-          f'{locators.user_name}\t'
-          f'{locators.password}\t'
-          f'{datetime.datetime.now()}\t'
-          f'{action}')
-    sys.stdout = old_instance
-    log_file.close()
+# def logger(action):
+#     # create variable to store the file content
+#     old_instance = sys.stdout
+#     log_file = open('../logs/aos.log', 'a')  # open log file and append a record
+#     sys.stdout = log_file
+#     print(f'{locators.user_email}\t'
+#           f'{locators.user_name}\t'
+#           f'{locators.password}\t'
+#           f'{datetime.datetime.now()}\t'
+#           f'{action}')
+#     sys.stdout = old_instance
+#     log_file.close()
 
 
 def ssh(filename):
