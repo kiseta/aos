@@ -63,11 +63,11 @@ def log_in():
         if driver.find_element(By.LINK_TEXT, 'CREATE NEW ACCOUNT').is_displayed():
             print(f'Login form is displayed - continue to Login')
             driver.find_element(By.NAME, 'username').send_keys(locators.user_name)
-            sleep(0.25)
+            sleep(1)
             driver.find_element(By.NAME, 'password').send_keys(locators.password)
-            sleep(0.25)
+            sleep(1)
             driver.find_element(By.ID, 'sign_in_btnundefined').click()
-            sleep(0.25)
+            sleep(1)
         else:
             print(f'Login Form is not displayed')
 
@@ -78,7 +78,7 @@ def validate_user_login():
     print(f'{check_user_name} user name is displayed')
     if locators.user_name in check_user_name:
         print(f'Expected user: {locators.user_name} login Successful!')
-        sleep(0.25)
+        sleep(1)
     else:
         print(f'Expected Username: "{locators.user_name}" is not displayed!')
     ssh('validate_user_login')
@@ -87,9 +87,9 @@ def log_out():
     print(f'\n------------------------~* LOGOUT  *~------------------------')
     sleep(2)
     driver.find_element(By.ID, 'menuUserLink').click()
-    sleep(0.25)
+    sleep(1)
     driver.find_element(By.XPATH, '//a/div/label[contains(.,"Sign out")]').click()
-    sleep(0.25)
+    sleep(1)
     if driver.current_url == locators.base_url:
         print(f'Logout Successful! at {datetime.datetime.now()}')
     driver.refresh()
@@ -109,25 +109,25 @@ def create_new_user():
         sleep(2)
         if driver.current_url == locators.new_account_url:
             assert driver.find_element(By.XPATH, '//h3[contains(.,"CREATE ACCOUNT")]').is_displayed()
-            sleep(0.25)
+            sleep(1)
             print(f'CREATE ACCOUNT Page is displayed\n')
             # populate edit form fields
             for i in range(len(locators.list_name)):
                 name, val = locators.list_name[i], locators.list_val[i]
                 driver.find_element(By.NAME, name).send_keys(val)
-                sleep(0.25)
+                sleep(1)
             driver.find_element(By.XPATH, f'//option[contains(@label, "{locators.country}")]').click()
-            sleep(0.25)
+            sleep(1)
             driver.find_element(By.NAME, 'i_agree').click()
-            sleep(0.25)
+            sleep(1)
             ssh('create_new_user_form_populated')
             driver.find_element(By.ID, 'register_btnundefined').click()
-            sleep(0.25)
+            sleep(1)
             if driver.find_element(By.LINK_TEXT, locators.user_name).is_displayed():
                 print(f'New User {locators.user_name}/{locators.user_email} registration successful!'
                       f'\nUserName: {locators.user_name} is displayed')
                 logger('created')
-                sleep(0.25)
+                sleep(1)
             else:
                 print(f'New User was not created. Try again.')
 
@@ -135,7 +135,7 @@ def create_new_user():
 def delete_account():
     print(f'\n-----------------~* DELETE NEW USER *~---------------------')
     assert driver.find_element(By.LINK_TEXT, locators.user_name).is_displayed()
-    sleep(0.25)
+    sleep(1)
     driver.find_element(By.LINK_TEXT, locators.user_name).click()
     sleep(0.5)
     driver.find_element(By.XPATH, '//a/div/label[contains(.,"My account")]').click()
@@ -174,7 +174,7 @@ def validate_user_deleted():
     error_label = driver.find_element(By.XPATH, '//label[contains(.,"Incorrect user name or password.")]').text
     if driver.find_element(By.XPATH, '//label[contains(.,"Incorrect user name or password.")]').is_displayed():
         print(f'Username/Password {locators.user_name}/{locators.password} is not found. Error: {error_label}')
-        sleep(0.25)
+        sleep(1)
         # close login popup
         ssh('validate_user_deleted')
         driver.find_element(By.XPATH, '//div[contains(@class,"closeBtn loginPopUpCloseBtn")]').click()
@@ -208,11 +208,11 @@ def checkout_shopping_cart():
         print(f'\n------------------------~* CHECKOUT LOGIN  *~------------------------')
         print(f'Login page is displayed - Loging to checkout shopping cart')
         driver.find_element(By.NAME, 'usernameInOrderPayment').send_keys(locators.user_name)
-        sleep(0.25)
+        sleep(1)
         driver.find_element(By.NAME, 'passwordInOrderPayment').send_keys(locators.password)
-        sleep(0.25)
+        sleep(1)
         driver.find_element(By.ID, 'login_btnundefined').click()
-        sleep(0.25)
+        sleep(1)
     # -----------------------------------------------------
 
     sleep(2)
@@ -234,11 +234,11 @@ def checkout_shopping_cart():
         print(f'\n-------------------~* SAFEPAY PAYMENT  *~-------------------')
         # safe pay details
         driver.find_element(By.NAME, 'safepay').click()
-        sleep(0.25)
+        sleep(1)
         driver.find_element(By.NAME, 'safepay_username').send_keys('spusername')
-        sleep(0.25)
+        sleep(1)
         driver.find_element(By.NAME, 'safepay_password').send_keys('Pass1')
-        sleep(0.25)
+        sleep(1)
         # uncheck save checkbox if checked
         save_safepay = driver.find_element(By.NAME, 'save_safepay').is_selected()
         print(f'Safepay save checkbox selected: {save_safepay}')
@@ -287,9 +287,9 @@ def checkout_shopping_cart():
 def validate_order():
     print(f'\n------------------------~* VALIDATE ORDER PAGE *~------------------------')
     driver.find_element(By.ID, 'menuUserLink').click()
-    sleep(0.25)
+    sleep(1)
     driver.find_element(By.XPATH, '//a/div/label[contains(.,"My orders")]').click()
-    sleep(0.25)
+    sleep(1)
     assert driver.find_element(By.XPATH, f'//H3[contains(.,"MY ORDERS")]').is_displayed()
     print('MY ORDERS page is displayed')
     assert driver.find_element(By.XPATH, f'//td/label[contains(.,"{locators.order_number}")]').is_displayed()
