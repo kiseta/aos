@@ -7,6 +7,9 @@ class AOSPositiveTestCases(unittest.TestCase):
     @staticmethod
     def test_aos():
         methods.setup()
+        methods.validate_homepage_texts_links()
+        methods.validate_top_nav_menu()
+        methods.validate_contact_us_form()
         methods.create_new_user()
         methods.checkout_shopping_cart()
         methods.validate_order()

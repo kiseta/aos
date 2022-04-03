@@ -3,26 +3,29 @@ import sys
 import datetime
 from time import sleep
 from selenium import webdriver
+from selenium.webdriver.support.select import Select
 import aos_locators as locators
 from selenium.webdriver.common.by import By
-# from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
 
-options = Options()
-options.add_argument("--headless")
-options.add_argument("window-size=1400,1500")
-options.add_argument("--disable-gpu")
-options.add_argument("--no-sandbox")
-options.add_argument("start-maximized")
-options.add_argument("enable-automation")
-options.add_argument("--disable-infobars")
-options.add_argument("--disable-dev-shm-usage")
+# ------------------- headless ----------------------
+# from selenium.webdriver.chrome.options import Options
+# options = Options()
+# options.add_argument("--headless")
+# options.add_argument("window-size=1400,1500")
+# options.add_argument("--disable-gpu")
+# options.add_argument("--no-sandbox")
+# options.add_argument("start-maximized")
+# options.add_argument("enable-automation")
+# options.add_argument("--disable-infobars")
+# options.add_argument("--disable-dev-shm-usage")
+# driver = webdriver.Chrome(options=options)
+# --------------------------------------------------
 
-driver = webdriver.Chrome(options=options)
-
-# s = Service(executable_path='chromedriver.exe')
-# driver = webdriver.Chrome(service=s)
-
+# ------------------- visible ----------------------
+from selenium.webdriver.chrome.service import Service
+s = Service(executable_path='chromedriver.exe')
+driver = webdriver.Chrome(service=s)
+# ---------------------------------------------------
 
 def setup():
     print('\n-------------------------~*~*~*~*------------------------')
@@ -96,6 +99,93 @@ def log_out():
     driver.refresh()
     sleep(3)
     # breakpoint()
+
+
+def validate_homepage_texts_links():
+    # all text check
+    print(f'\n-----------------~* VALIDATE HOME PAGE TEXTS AND LINKS *~-------------------')
+    assert driver.find_element(By.XPATH, '//h3[contains(.,"SPECIAL OFFER")]').is_displayed()
+    assert driver.find_element(By.XPATH, '//span[contains(.,"EXPLORE THE NEW DESIGN")]').is_displayed()
+    assert driver.find_element(By.XPATH, '//p[contains(.,"Supremely thin, yet incredibly durable")]').is_displayed()
+    assert driver.find_element(By.XPATH, '//*[contains(.,"ALL YOU WANT FROM A TABLET")]').is_displayed()
+    assert driver.find_element(By.XPATH, '//h3[contains(.,"POPULAR ITEMS")]').is_displayed()
+    assert driver.find_element(By.NAME, 'popular_item_16_name').is_displayed()
+    assert driver.find_element(By.NAME, 'popular_item_10_name').is_displayed()
+    assert driver.find_element(By.NAME, 'popular_item_21_name').is_displayed()
+    assert driver.find_element(By.XPATH, '//h1[contains(.,"CONTACT US")]').is_displayed()
+    assert driver.find_element(By.XPATH, '//h3[contains(.,"FOLLOW US")]').is_displayed()
+
+    # all links check
+    for i in range(len(locators.list_url)):
+        item_title, item_url, item_id = locators.list_title[i], locators.list_url[i], locators.list_id[i]
+        assert driver.find_element(By.ID, item_id).is_displayed()
+        driver.find_element(By.ID, item_id).click()
+        sleep(1)
+        assert driver.current_url == item_url
+        print(f'Home page item {item_title} is displayed and clickable')
+        sleep(1)
+        driver.find_element(By.XPATH, '//span[contains(.,"dvantage")]').click()
+        sleep(1)
+
+    # ----------------------------------
+    driver.find_element(By.XPATH, '//div/button[contains(.,"EXPLORE NOW")]').click()
+    assert driver.current_url == locators.explore_now_url
+    sleep(2)
+    driver.find_element(By.XPATH, '//span[contains(.,"dvantage")]').click()
+    sleep(2)
+    # ----------------------------------
+
+
+def validate_top_nav_menu():
+    print(f'\n------------------~* VALIDATE TOP NAVIGATION  MENU *~---------------------')
+    sleep(3)
+    driver.find_element(By.XPATH, '//a[contains(.,"OUR PRODUCTS")]').click()
+    sleep(1)
+    driver.find_element(By.XPATH, '//a[contains(.,"SPECIAL OFFER")]').click()
+    sleep(1)
+    driver.find_element(By.XPATH, '//a[contains(.,"POPULAR ITEMS")]').click()
+    sleep(1)
+    driver.find_element(By.XPATH, '//a[contains(.,"CONTACT US")]').click()
+    sleep(1)
+    driver.find_element(By.ID, 'menuSearch').click()
+    sleep(1)
+    driver.find_element(By.ID, 'menuUser').click()
+    sleep(1)
+    driver.find_element(By.XPATH, '//div[@class = "closeBtn loginPopUpCloseBtn"]').click()
+    sleep(1)
+    driver.find_element(By.ID, 'shoppingCartLink').click()
+    sleep(2)
+    driver.find_element(By.XPATH, '//span[contains(.,"dvantage")]').click()
+    sleep(2)
+    driver.find_element(By.ID, 'helpLink').click()
+    sleep(2)
+    print('All Top Navigation Menu Links are Clickable OUR PRODUCTS | SPECIAL OFFER | POPULAR ITEMS | CONTACT US |'
+          ' SEARCH ICON| USER ICON | SHOPPING CART LINK | HELP LINK ')
+
+
+def validate_contact_us_form():
+    print(f'\n------------------~* VALIDATE CONTACT US FORM *~---------------------')
+    sleep(1)
+    Select(driver.find_element(By.NAME, 'categoryListboxContactUs')).select_by_visible_text('Laptops')
+    sleep(1)
+    Select(driver.find_element(By.NAME, 'productListboxContactUs')).select_by_index(1)
+    sleep(1)
+    driver.find_element(By.NAME, 'emailContactUs').send_keys(locators.user_email)
+    sleep(1)
+    driver.find_element(By.NAME, 'subjectTextareaContactUs').send_keys(locators.email_subject)
+    sleep(2)
+    assert driver.find_element(By.ID, 'send_btnundefined').is_enabled()
+    sleep(1)
+    ssh('populate_contact_us_form')
+    driver.find_element(By.ID, 'send_btnundefined').click()
+    sleep(1)
+    ssh('validate_contact_us_form')
+    assert driver.find_element(By.XPATH,
+                               '//p[contains(.,"Thank you for contacting Advantage support.")]').is_displayed()
+    sleep(1)
+    driver.find_element(By.LINK_TEXT, 'CONTINUE SHOPPING').click()
+    sleep(1)
+    print(f'CONTACT US Form is confirmed!')
 
 
 def create_new_user():
@@ -343,6 +433,9 @@ def ssh(filename):
 
 
 # setup()
+# validate_homepage_texts_links()
+# validate_top_nav_menu()
+# validate_contact_us_form()
 # create_new_user()
 # log_out()
 # log_in()
