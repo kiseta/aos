@@ -1,9 +1,9 @@
 # Project info
 
 ## Purpose
-To create automated test to test basic business critical functionality of an eCommerce web application Advantage Online Shopping
+To create automated test to test business critical functionality of an eCommerce web application Advantage Online Shopping
 
-# Technology Stack
+## Technology Stack
 
 ### Application Environment
 - https://advantageonlineshopping.com/
@@ -25,9 +25,10 @@ https://advantageonlineshopping.com/#/version
 - **Data:** Python Faker library, v 11.3
 
 ### Execution Environment
-Jenkins on AWS EC2 Linix instance with SSH-Key based secure connection to GitHub repository to pull and run the selenium scripts
+Jenkins on AWS EC2 Linix(Ubuntu) instance with SSH-Key based secure connection to GitHub (this repository)
 
 
-### Project Management
-- Automated tests are developed based on Manual Test cases using Jira weekly Sprints
-- Manual Test Cases are documented in Confluence and managed via Jira Tasks
+### Project Management/Development Tracking
+- Automated tests are developed based on Manual Test cases using Jira bi-weekly Sprints
+- Manual Test Cases are documented in Confluence
+- Manual and Automated tests development is managed via Jira Issues (type:Task)
